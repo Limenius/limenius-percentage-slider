@@ -8,9 +8,9 @@
 <% }) %>
 </head>
 <body>
-    <input id="testPercentageGeneric1" type="text"/>
-    <input id="testPercentageGeneric2" type="text"/>
-    <input id="testPercentageGeneric3" type="text"/>
+    <input id="percentage1" type="text"/>
+    <input id="percentage2" type="text"/>
+    <input id="percentage3" type="text"/>
 
 <% with (scripts) { %>
   <% [].concat(polyfills, jasmine, boot, vendor, helpers, src, specs,reporters).forEach(function(script){ %>
