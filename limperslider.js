@@ -6,9 +6,11 @@ function LimperSlider(selectors, options) {
     F.prototype = (function() {
         var el = null;
         var inputs = [];
-        var handles = [];
+        var handlers = [];
         var zones = [];
         var tooltips = [];
+        var values = [];
+        var total = 100;
         var hideInputs = function(selectors) {
             for (var i = 0; i < selectors.length; i++) {
                 var selector = selectors[i];
@@ -25,21 +27,22 @@ function LimperSlider(selectors, options) {
             }
         };
 
-        var createHandles = function (track) {
+        var createHandlers = function (track) {
             for (var i = 0; i < inputs.length - 1; i++) {
                 var handle = document.createElement('div');
                 addClass(handle, 'limper-handle');
                 track.appendChild(handle);
-                zones.push(handle);
+                handlers.push(handle);
             }
         };
 
         var createZones = function (track) {
+            var colors = ['red', 'yellow', 'green'];
             for (var i = 0; i < inputs.length; i++) {
                 var zone = document.createElement('div');
                 addClass(zone, 'limper-zone');
-                track.appendChild(zone);
-                zones.push(zone);
+                zones.push(track.appendChild(zone));
+                zones[i].style['background-color'] = colors[i];
             }
         };
 
@@ -48,7 +51,7 @@ function LimperSlider(selectors, options) {
                 var tooltip = document.createElement('div');
                 addClass(tooltip, 'limper-tooltip');
                 track.appendChild(tooltip);
-                zones.push(tooltip);
+                tooltips.push(tooltip);
             }
         };
 
@@ -56,9 +59,57 @@ function LimperSlider(selectors, options) {
             var track = document.createElement('div');
             addClass(track, 'limper-track');
             el.appendChild(track);
-            createHandles(track);
             createZones(track);
             createTooltips(track);
+            createHandlers(track);
+        };
+
+        var isNumeric = function(n) {
+            return !isNaN(parseFloat(n)) && isFinite(n);
+        };
+
+        var computeInitialValues = function() {
+            var aggregated = 0;
+            var allValidValues = true;
+            for (var i = 0; i < inputs.length; i++) {
+                var value = inputs[i].getAttribute('value');
+                if (!isNumeric(value)) {
+                    allValidValues = false;
+                } else {
+                    aggregated += value;
+                    values.push(value);
+                }
+            }
+            if (aggregated != total || !allValidValues) {
+                var acc = 0;
+                for (var i = 0; i < inputs.length - 1; i++) {
+                    acc += total / inputs.length;
+                    inputs[i].setAttribute('value', acc );
+                    values.push(acc);
+                }
+                inputs[inputs.length - 1].setAttribute('value', total);
+                values.push(total);
+            }
+        };
+
+        var positionZones = function() {
+            var prevVal = 0;
+            for (var i = 0; i < zones.length; i++) {
+                zones[i].style.left = prevVal + '%';
+                zones[i].style.width = (values[i] - prevVal) + '%';
+                prevVal = values[i];
+            }
+        };
+
+        var positionHandlers = function() {
+            for (var i = 0; i < values.length - 1; i++) {
+                handlers[i].style.left = values[i] + '%';
+            }
+        };
+
+        var positionElements = function() {
+                positionZones();
+                positionHandlers();
         };
 
         return {
@@ -87,7 +138,9 @@ function LimperSlider(selectors, options) {
                 el.setAttribute('id', idlimper);
 
                 hideInputs(selectors);
+                computeInitialValues();
                 createElements();
+                positionElements();
             },
 
         }
