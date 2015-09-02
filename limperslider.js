@@ -11,11 +11,12 @@ function LimperSlider(selectors, options) {
         var tooltips = [];
         var values = [];
         var total = 100;
+        var beingMoved = null;
         var hideInputs = function(selectors) {
             for (var i = 0; i < selectors.length; i++) {
                 var selector = selectors[i];
                 var inpelement = document.querySelector(selector);
-                inpelement.setAttribute('type', 'hidden');
+                inpelement.setAttribute('readonly', 'readonly');
             }
         };
 
@@ -27,12 +28,62 @@ function LimperSlider(selectors, options) {
             }
         };
 
+        var onMouseUp = function(e) {
+            document.removeEventListener("mousemove", onMouseMove, false);
+            document.removeEventListener("mouseup", onMouseUp, false);
+        };
+
+        var onMouseMove = function(e) {
+            var handleIdx = beingMoved.getAttribute('limperidx');
+            var percentage = getPercentage(e);
+            setNewPosition(handleIdx, percentage);
+        };
+
+        var onMouseDown = function(e) {
+            document.removeEventListener("mousemove", onMouseMove, false);
+            document.removeEventListener("mouseup", onMouseUp, false);
+            document.addEventListener("mousemove", onMouseMove, false);
+            document.addEventListener("mouseup", onMouseUp, false);
+            if(e.stopPropagation) e.stopPropagation();
+            if(e.preventDefault) e.preventDefault();
+            e.cancelBubble=true;
+            e.returnValue=false;
+            beingMoved = e.target;
+            return false;
+        };
+
+        var setNewPosition = function(handleIdx, percentage) {
+            values[handleIdx] = percentage;
+            positionElements();
+            setInputsFromPosition();
+        };
+
+        var setInputsFromPosition = function() {
+            var prevVal = 0;
+            for (var i = 0; i < inputs.length; i++) {
+                inputs[i].setAttribute('value', values[i] - prevVal);
+                prevVal = values[i];
+            }
+        };
+
+        var getPercentage = function(e) {
+            var eventPosition = e.pageX;
+            var rect = el.getBoundingClientRect();
+            var offset = rect.left;
+            var size = rect.right - rect.left;
+            var distanceToSlide = eventPosition - offset;
+            var percentage = (distanceToSlide / size) * 100;
+            return Math.max(0, Math.min(100, percentage));
+        };
+
         var createHandlers = function (track) {
             for (var i = 0; i < inputs.length - 1; i++) {
                 var handle = document.createElement('div');
                 addClass(handle, 'limper-handle');
+                handle.setAttribute('limperidx', i);
                 track.appendChild(handle);
                 handlers.push(handle);
+                handle.addEventListener('mousedown', onMouseDown);
             }
         };
 
@@ -84,10 +135,10 @@ function LimperSlider(selectors, options) {
                 var acc = 0;
                 for (var i = 0; i < inputs.length - 1; i++) {
                     acc += total / inputs.length;
-                    inputs[i].setAttribute('value', acc );
+                    inputs[i].setAttribute('value', total / inputs.length);
                     values.push(acc);
                 }
-                inputs[inputs.length - 1].setAttribute('value', total);
+                inputs[inputs.length - 1].setAttribute('value', total / inputs.length);
                 values.push(total);
             }
         };

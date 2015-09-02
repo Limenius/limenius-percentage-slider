@@ -24,13 +24,13 @@ describe("LimperSlider", function() {
         expect(thrower).toThrow();
     });
 
-    it("Hides inputs", function() {
+    it("Inputs readonly", function() {
         var thrower = function() {
             new LimperSlider(["#percentage1", "#percentage2", "#percentage3"]);
         };
         var element = document.querySelector("#percentage2");
-        var type = element.getAttribute('type');
-        expect(type).toEqual('hidden');
+        var readonly = element.getAttribute('readonly');
+        expect(readonly).toEqual('readonly');
     });
 
     it("Initialization creates handles", function() {
