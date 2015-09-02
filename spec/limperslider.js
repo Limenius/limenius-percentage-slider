@@ -33,8 +33,8 @@ describe("LimperSlider", function() {
         expect(type).toEqual('hidden');
     });
 
-    it("Initialization creates ticks", function() {
-        var elements = document.querySelectorAll('.limper-tick');
+    it("Initialization creates handles", function() {
+        var elements = document.querySelectorAll('.limper-handle');
         expect(elements.length).toEqual(2);
     });
 

@@ -6,7 +6,7 @@ function LimperSlider(selectors, options) {
     F.prototype = (function() {
         var el = null;
         var inputs = [];
-        var ticks = [];
+        var handles = [];
         var zones = [];
         var tooltips = [];
         var hideInputs = function(selectors) {
@@ -25,12 +25,12 @@ function LimperSlider(selectors, options) {
             }
         };
 
-        var createTicks = function (track) {
+        var createHandles = function (track) {
             for (var i = 0; i < inputs.length - 1; i++) {
-                var tick = document.createElement('div');
-                addClass(tick, 'limper-tick');
-                track.appendChild(tick);
-                zones.push(tick);
+                var handle = document.createElement('div');
+                addClass(handle, 'limper-handle');
+                track.appendChild(handle);
+                zones.push(handle);
             }
         };
 
@@ -56,7 +56,7 @@ function LimperSlider(selectors, options) {
             var track = document.createElement('div');
             addClass(track, 'limper-track');
             el.appendChild(track);
-            createTicks(track);
+            createHandles(track);
             createZones(track);
             createTooltips(track);
         };
