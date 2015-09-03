@@ -13,6 +13,9 @@
       "package.json",
       "Gruntfile.js",
       "bower.json",
+      ".bower.json",
+      ".gitignore",
+      ".jshintrc",
       "README.md"
   ],
   "main": "limperslider.js",
