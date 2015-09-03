@@ -78,7 +78,11 @@ function LimperSlider(selectors, options) {
             if (handleIdx < handlers.length - 1) {
                 maxPercentage = values[handleIdx + 1];
             }
-            return Math.max(0, Math.min(maxPercentage, percentage));
+            var minPercentage = 0;
+            if (handleIdx > 0) {
+                minPercentage = values[handleIdx - 1];
+            }
+            return Math.max(Math.max(minPercentage, percentage), Math.min(maxPercentage, percentage));
         };
 
         var createHandlers = function (track) {
