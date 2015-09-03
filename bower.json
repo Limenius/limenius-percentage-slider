@@ -1,0 +1,13 @@
+{
+  "name": "limenius-percentage-slider",
+  "version": "1.0.0",
+  "description": "Slider for percentages. Or segments that add up to a certain value",
+  "keywords": [
+    "slider",
+    "javascript",
+    "percentage",
+  ],
+  "main": "limperslider.js",
+  "license": "MIT"
+}
+

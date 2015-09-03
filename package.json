@@ -20,6 +20,10 @@
     },
     "spec": "specs/**/*.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/limenius/limenius-percentage-slider.git"
+  },
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-contrib-jasmine": "^0.9.1",
