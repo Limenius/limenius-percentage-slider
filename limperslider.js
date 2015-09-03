@@ -61,7 +61,7 @@ function LimperSlider(selectors, options) {
         var setInputsFromPosition = function() {
             var prevVal = 0;
             for (var i = 0; i < inputs.length; i++) {
-                inputs[i].setAttribute('value', values[i] - prevVal);
+                inputs[i].setAttribute('value', (values[i] - prevVal).toFixed(2));
                 prevVal = values[i];
             }
         };
@@ -73,7 +73,12 @@ function LimperSlider(selectors, options) {
             var size = rect.right - rect.left;
             var distanceToSlide = eventPosition - offset;
             var percentage = (distanceToSlide / size) * 100;
-            return Math.max(0, Math.min(100, percentage));
+            var handleIdx = parseInt(beingMoved.getAttribute('limperidx'), 10);
+            var maxPercentage = 100;
+            if (handleIdx < handlers.length - 1) {
+                maxPercentage = values[handleIdx + 1];
+            }
+            return Math.max(0, Math.min(maxPercentage, percentage));
         };
 
         var createHandlers = function (track) {
@@ -135,10 +140,10 @@ function LimperSlider(selectors, options) {
                 var acc = 0;
                 for (var i = 0; i < inputs.length - 1; i++) {
                     acc += total / inputs.length;
-                    inputs[i].setAttribute('value', total / inputs.length);
+                    inputs[i].setAttribute('value', (total / inputs.length).toFixed(2));
                     values.push(acc);
                 }
-                inputs[inputs.length - 1].setAttribute('value', total / inputs.length);
+                inputs[inputs.length - 1].setAttribute('value', (total / inputs.length).toFixed(2));
                 values.push(total);
             }
         };
