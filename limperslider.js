@@ -132,22 +132,24 @@ function LimperSlider(selectors, options) {
             var aggregated = 0;
             var allValidValues = true;
             for (var i = 0; i < inputs.length; i++) {
-                var value = inputs[i].getAttribute('value');
+                var value = parseFloat(inputs[i].getAttribute('value'));
                 if (!isNumeric(value)) {
                     allValidValues = false;
                 } else {
                     aggregated += value;
-                    values.push(value);
+                    values.push(aggregated);
                 }
             }
-            if (aggregated != total || !allValidValues) {
+            if (Math.round(aggregated) != total || !allValidValues) {
+                values = [];
                 var acc = 0;
                 for (var i = 0; i < inputs.length - 1; i++) {
-                    acc += total / inputs.length;
-                    inputs[i].setAttribute('value', (total / inputs.length).toFixed(2));
+                    var increment = (total / inputs.length).toFixed(2);
+                    acc += parseFloat(increment);
+                    inputs[i].setAttribute('value', increment);
                     values.push(acc);
                 }
-                inputs[inputs.length - 1].setAttribute('value', (total / inputs.length).toFixed(2));
+                inputs[inputs.length - 1].setAttribute('value', total - acc);
                 values.push(total);
             }
         };
