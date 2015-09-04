@@ -204,9 +204,19 @@ function limperslider(selectors, options) {
                 }
 
                 idlimper += "-limper";
+
                 el = document.createElement('div');
                 addClass(el, 'limperslider');
-                lastelement.insertAdjacentElement('afterend', el);
+
+                if (options && options.element) {
+                    options.element.appendChild(el);
+                } else if (options && options.selector) {
+                    var insertin = document.querySelector(options.selector);
+                    insertin.appendChild(el);
+                } else {
+                    lastelement.insertAdjacentElement('afterend', el);
+                }
+
                 el.setAttribute('id', idlimper);
 
                 hideInputs(selectors);
