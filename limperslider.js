@@ -1,6 +1,6 @@
 'use strict';
 
-function LimperSlider(selectors, options) {
+function limperslider(selectors, options) {
 
     function F() {};
     F.prototype = (function() {
@@ -13,10 +13,9 @@ function LimperSlider(selectors, options) {
         var total = 100;
         var beingMoved = null;
         var hideInputs = function(selectors) {
-            for (var i = 0; i < selectors.length; i++) {
-                var selector = selectors[i];
-                var inpelement = document.querySelector(selector);
-                inpelement.setAttribute('readonly', 'readonly');
+            for (var i = 0; i < inputs.length; i++) {
+                var input = inputs[i];
+                input.setAttribute('readonly', 'readonly');
             }
         };
 
@@ -132,16 +131,15 @@ function LimperSlider(selectors, options) {
             var aggregated = 0;
             var allValidValues = true;
             for (var i = 0; i < inputs.length; i++) {
-                var value = parseFloat(inputs[i].getAttribute('value'));
+                var value = inputs[i].getAttribute('value');
                 if (!isNumeric(value)) {
                     allValidValues = false;
                 } else {
                     aggregated += value;
-                    values.push(aggregated);
+                    values.push(value);
                 }
             }
-            if (Math.round(aggregated) != total || !allValidValues) {
-                values = [];
+            if (aggregated != total || !allValidValues) {
                 var acc = 0;
                 for (var i = 0; i < inputs.length - 1; i++) {
                     var increment = (total / inputs.length).toFixed(2);
@@ -174,15 +172,27 @@ function LimperSlider(selectors, options) {
                 positionHandlers();
         };
 
+        //Returns true if it is a DOM element
+        function isElement(o){
+            return (
+                typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
+                o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
+            );
+        }
+
         return {
             init: function (selectors, options) {
                 var idlimper = '';
                 var lastelement = null;
                 for (var i = 0; i < selectors.length; i++) {
                     var selector = selectors[i];
-                    var element = document.querySelector(selector);
-                    if (!selector) {
-                        throw "element" + selector + "does not exist"
+                    if (isElement(selector)) {
+                        element = selector;
+                    } else {
+                        var element = document.querySelector(selector);
+                    }
+                    if (!element) {
+                        throw "element " + selector + " does not exist"
                     }
                     var id = element.getAttribute('id');
                     if (i > 0) {
@@ -212,5 +222,13 @@ function LimperSlider(selectors, options) {
 
     f.init(selectors, options);
     return f;
- 
 };
+
+/* AMD Compatibility */
+window.limperslider = limperslider;
+
+if (typeof define === "function" && define.amd) {
+  define("limperslider", [], function() {
+    return window.limperslider;
+  });
+}
