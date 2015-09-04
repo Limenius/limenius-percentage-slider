@@ -135,8 +135,8 @@ function limperslider(selectors, options) {
                 if (!isNumeric(value)) {
                     allValidValues = false;
                 } else {
-                    aggregated += value;
-                    values.push(value);
+                    aggregated += parseFloat(value);
+                    values.push(aggregated);
                 }
             }
             if (aggregated != total || !allValidValues) {
