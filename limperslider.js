@@ -4,6 +4,7 @@ function limperslider(selectors, options) {
 
     function F() {};
     F.prototype = (function() {
+        var element = null;
         var el = null;
         var inputs = [];
         var handlers = [];
@@ -36,6 +37,7 @@ function limperslider(selectors, options) {
             var handleIdx = beingMoved.getAttribute('limperidx');
             var percentage = getPercentage(e);
             setNewPosition(handleIdx, percentage);
+            emitChange();
         };
 
         var onMouseDown = function(e) {
@@ -81,7 +83,12 @@ function limperslider(selectors, options) {
             if (handleIdx > 0) {
                 minPercentage = values[handleIdx - 1];
             }
-            return Math.max(Math.max(minPercentage, percentage), Math.min(maxPercentage, percentage));
+            if (percentage < minPercentage) {
+                return minPercentage;
+            } else if (percentage > maxPercentage) {
+                return maxPercentage;
+            }
+            return percentage;
         };
 
         var createHandlers = function (track) {
@@ -140,6 +147,7 @@ function limperslider(selectors, options) {
                 }
             }
             if (aggregated != total || !allValidValues) {
+                values = [];
                 var acc = 0;
                 for (var i = 0; i < inputs.length - 1; i++) {
                     var increment = (total / inputs.length).toFixed(2);
@@ -171,6 +179,16 @@ function limperslider(selectors, options) {
                 positionZones();
                 positionHandlers();
         };
+
+        var emitChange = function() {
+            if (document.createEvent) {
+                var event = document.createEvent('HTMLEvents');
+                event.initEvent('change', true, false);
+                el.dispatchEvent(event);
+            } else {
+                el.fireEvent('onchange');
+            }
+        }
 
         //Returns true if it is a DOM element
         function isElement(o){
@@ -210,11 +228,13 @@ function limperslider(selectors, options) {
 
                 if (options && options.element) {
                     options.element.appendChild(el);
+                    this.element = options.element;
                 } else if (options && options.selector) {
-                    var insertin = document.querySelector(options.selector);
-                    insertin.appendChild(el);
+                    this.element = document.querySelector(options.selector);
+                    this.element.appendChild(el);
                 } else {
                     lastelement.insertAdjacentElement('afterend', el);
+                    this.element = lastelement;
                 }
 
                 el.setAttribute('id', idlimper);
