@@ -1,8 +1,6 @@
 'use strict';
 
-describe("LimperSlider", function() {
-    var limperslider = new LimperSlider(["#percentage1", "#percentage2", "#percentage3"]);
-
+describe("limperslider", function() {
     var hasClass = function(el, className) {
         if (el.classList) {
             return el.classList.contains(className);
@@ -10,6 +8,10 @@ describe("LimperSlider", function() {
             return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
         }
     };
+
+    beforeEach(function() {
+        new limperslider(["#percentage1", "#percentage2", "#percentage3"]);
+    });
 
     it("Initialization creates .limperslider", function() {
         var element = document.querySelector('#percentage1-percentage2-percentage3-limper');
@@ -19,14 +21,14 @@ describe("LimperSlider", function() {
 
     it("Bad initialization throws exception", function() {
         var thrower = function() {
-            new LimperSlider(["#yolo", "#percentage2", "#percentage3"]);
+            new limperslider(["#yolo", "#percentage2", "#percentage3"]);
         };
         expect(thrower).toThrow();
     });
 
     it("Inputs readonly", function() {
         var thrower = function() {
-            new LimperSlider(["#percentage1", "#percentage2", "#percentage3"]);
+            new limperslider(["#percentage1", "#percentage2", "#percentage3"]);
         };
         var element = document.querySelector("#percentage2");
         var readonly = element.getAttribute('readonly');

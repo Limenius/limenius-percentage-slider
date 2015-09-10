@@ -1,261 +1,263 @@
 'use strict';
 
-function limperslider(selectors, options) {
+var limperslider = (function(){
+    return limperslider;
+    function limperslider(selectors, options) {
 
-    function F() {};
-    F.prototype = (function() {
-        var element = null;
-        var el = null;
-        var inputs = [];
-        var handlers = [];
-        var zones = [];
-        var tooltips = [];
-        var values = [];
-        var total = 100;
-        var beingMoved = null;
-        var hideInputs = function(selectors) {
-            for (var i = 0; i < inputs.length; i++) {
-                var input = inputs[i];
-                input.setAttribute('readonly', 'readonly');
-            }
-        };
+        function F() {};
+        F.prototype = (function() {
+            var element = null;
+            var el = null;
+            var inputs = [];
+            var handlers = [];
+            var zones = [];
+            var tooltips = [];
+            var values = [];
+            var total = 100;
+            var beingMoved = null;
+            var hideInputs = function(selectors) {
+                for (var i = 0; i < inputs.length; i++) {
+                    var input = inputs[i];
+                    input.setAttribute('readonly', 'readonly');
+                }
+            };
 
-        var addClass = function (element, className) {
-            if (element.classList) {
-                element.classList.add(className);
-            } else {
-                element.className += ' ' + className;
-            }
-        };
-
-        var onMouseUp = function(e) {
-            document.removeEventListener("mousemove", onMouseMove, false);
-            document.removeEventListener("mouseup", onMouseUp, false);
-        };
-
-        var onMouseMove = function(e) {
-            var handleIdx = beingMoved.getAttribute('limperidx');
-            var percentage = getPercentage(e);
-            setNewPosition(handleIdx, percentage);
-            emitChange();
-        };
-
-        var onMouseDown = function(e) {
-            document.removeEventListener("mousemove", onMouseMove, false);
-            document.removeEventListener("mouseup", onMouseUp, false);
-            document.addEventListener("mousemove", onMouseMove, false);
-            document.addEventListener("mouseup", onMouseUp, false);
-            if(e.stopPropagation) e.stopPropagation();
-            if(e.preventDefault) e.preventDefault();
-            e.cancelBubble=true;
-            e.returnValue=false;
-            beingMoved = e.target;
-            return false;
-        };
-
-        var setNewPosition = function(handleIdx, percentage) {
-            values[handleIdx] = percentage;
-            positionElements();
-            setInputsFromPosition();
-        };
-
-        var setInputsFromPosition = function() {
-            var prevVal = 0;
-            for (var i = 0; i < inputs.length; i++) {
-                inputs[i].setAttribute('value', (values[i] - prevVal).toFixed(2));
-                prevVal = values[i];
-            }
-        };
-
-        var getPercentage = function(e) {
-            var eventPosition = e.pageX;
-            var rect = el.getBoundingClientRect();
-            var offset = rect.left;
-            var size = rect.right - rect.left;
-            var distanceToSlide = eventPosition - offset;
-            var percentage = (distanceToSlide / size) * 100;
-            var handleIdx = parseInt(beingMoved.getAttribute('limperidx'), 10);
-            var maxPercentage = 100;
-            if (handleIdx < handlers.length - 1) {
-                maxPercentage = values[handleIdx + 1];
-            }
-            var minPercentage = 0;
-            if (handleIdx > 0) {
-                minPercentage = values[handleIdx - 1];
-            }
-            if (percentage < minPercentage) {
-                return minPercentage;
-            } else if (percentage > maxPercentage) {
-                return maxPercentage;
-            }
-            return percentage;
-        };
-
-        var createHandlers = function (track) {
-            for (var i = 0; i < inputs.length - 1; i++) {
-                var handle = document.createElement('div');
-                addClass(handle, 'limper-handle');
-                handle.setAttribute('limperidx', i);
-                track.appendChild(handle);
-                handlers.push(handle);
-                handle.addEventListener('mousedown', onMouseDown);
-            }
-        };
-
-        var createZones = function (track) {
-            var colors = ['red', 'yellow', 'green'];
-            for (var i = 0; i < inputs.length; i++) {
-                var zone = document.createElement('div');
-                addClass(zone, 'limper-zone');
-                zones.push(track.appendChild(zone));
-                zones[i].style['background-color'] = colors[i];
-            }
-        };
-
-        var createTooltips = function (track) {
-            for (var i = 0; i < inputs.length; i++) {
-                var tooltip = document.createElement('div');
-                addClass(tooltip, 'limper-tooltip');
-                track.appendChild(tooltip);
-                tooltips.push(tooltip);
-            }
-        };
-
-        var createElements = function() {
-            var track = document.createElement('div');
-            addClass(track, 'limper-track');
-            el.appendChild(track);
-            createZones(track);
-            createTooltips(track);
-            createHandlers(track);
-        };
-
-        var isNumeric = function(n) {
-            return !isNaN(parseFloat(n)) && isFinite(n);
-        };
-
-        var computeInitialValues = function() {
-            var aggregated = 0;
-            var allValidValues = true;
-            for (var i = 0; i < inputs.length; i++) {
-                var value = inputs[i].getAttribute('value');
-                if (!isNumeric(value)) {
-                    allValidValues = false;
+            var addClass = function (element, className) {
+                if (element.classList) {
+                    element.classList.add(className);
                 } else {
-                    aggregated += parseFloat(value);
-                    values.push(aggregated);
+                    element.className += ' ' + className;
                 }
-            }
-            if (aggregated != total || !allValidValues) {
-                values = [];
-                var acc = 0;
-                for (var i = 0; i < inputs.length - 1; i++) {
-                    var increment = (total / inputs.length).toFixed(2);
-                    acc += parseFloat(increment);
-                    inputs[i].setAttribute('value', increment);
-                    values.push(acc);
-                }
-                inputs[inputs.length - 1].setAttribute('value', total - acc);
-                values.push(total);
-            }
-        };
+            };
 
-        var positionZones = function() {
-            var prevVal = 0;
-            for (var i = 0; i < zones.length; i++) {
-                zones[i].style.left = prevVal + '%';
-                zones[i].style.width = (values[i] - prevVal) + '%';
-                prevVal = values[i];
-            }
-        };
+            var onMouseUp = function(e) {
+                document.removeEventListener("mousemove", onMouseMove, false);
+                document.removeEventListener("mouseup", onMouseUp, false);
+            };
 
-        var positionHandlers = function() {
-            for (var i = 0; i < values.length - 1; i++) {
-                handlers[i].style.left = values[i] + '%';
-            }
-        };
+            var onMouseMove = function(e) {
+                var handleIdx = beingMoved.getAttribute('limperidx');
+                var percentage = getPercentage(e);
+                setNewPosition(handleIdx, percentage);
+                emitChange();
+            };
 
-        var positionElements = function() {
-                positionZones();
-                positionHandlers();
-        };
+            var onMouseDown = function(e) {
+                document.removeEventListener("mousemove", onMouseMove, false);
+                document.removeEventListener("mouseup", onMouseUp, false);
+                document.addEventListener("mousemove", onMouseMove, false);
+                document.addEventListener("mouseup", onMouseUp, false);
+                if(e.stopPropagation) e.stopPropagation();
+                if(e.preventDefault) e.preventDefault();
+                e.cancelBubble=true;
+                e.returnValue=false;
+                beingMoved = e.target;
+                return false;
+            };
 
-        var emitChange = function() {
-            if (document.createEvent) {
-                var event = document.createEvent('HTMLEvents');
-                event.initEvent('change', true, false);
-                el.dispatchEvent(event);
-            } else {
-                el.fireEvent('onchange');
-            }
-        }
-
-        //Returns true if it is a DOM element
-        function isElement(o){
-            return (
-                typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
-                o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
-            );
-        }
-
-        return {
-            init: function (selectors, options) {
-                var idlimper = '';
-                var lastelement = null;
-                for (var i = 0; i < selectors.length; i++) {
-                    var selector = selectors[i];
-                    if (isElement(selector)) {
-                        element = selector;
-                    } else {
-                        var element = document.querySelector(selector);
-                    }
-                    if (!element) {
-                        throw "element " + selector + " does not exist"
-                    }
-                    var id = element.getAttribute('id');
-                    if (i > 0) {
-                        idlimper += "-";
-                    }
-                    idlimper += id;
-                    inputs.push(element);
-                    lastelement = element;
-                }
-
-                idlimper += "-limper";
-
-                el = document.createElement('div');
-                addClass(el, 'limperslider');
-
-                if (options && options.element) {
-                    options.element.appendChild(el);
-                    this.element = options.element;
-                } else if (options && options.selector) {
-                    this.element = document.querySelector(options.selector);
-                    this.element.appendChild(el);
-                } else {
-                    lastelement.insertAdjacentElement('afterend', el);
-                    this.element = lastelement;
-                }
-
-                el.setAttribute('id', idlimper);
-
-                hideInputs(selectors);
-                computeInitialValues();
-                createElements();
+            var setNewPosition = function(handleIdx, percentage) {
+                values[handleIdx] = percentage;
                 positionElements();
-            },
+                setInputsFromPosition();
+            };
 
-        }
-    })();
+            var setInputsFromPosition = function() {
+                var prevVal = 0;
+                for (var i = 0; i < inputs.length; i++) {
+                    inputs[i].setAttribute('value', (values[i] - prevVal).toFixed(2));
+                    prevVal = values[i];
+                }
+            };
 
-    var f = new F();
+            var getPercentage = function(e) {
+                var eventPosition = e.pageX;
+                var rect = el.getBoundingClientRect();
+                var offset = rect.left;
+                var size = rect.right - rect.left;
+                var distanceToSlide = eventPosition - offset;
+                var percentage = (distanceToSlide / size) * 100;
+                var handleIdx = parseInt(beingMoved.getAttribute('limperidx'), 10);
+                var maxPercentage = 100;
+                if (handleIdx < handlers.length - 1) {
+                    maxPercentage = values[handleIdx + 1];
+                }
+                var minPercentage = 0;
+                if (handleIdx > 0) {
+                    minPercentage = values[handleIdx - 1];
+                }
+                if (percentage < minPercentage) {
+                    return minPercentage;
+                } else if (percentage > maxPercentage) {
+                    return maxPercentage;
+                }
+                return percentage;
+            };
 
-    f.init(selectors, options);
-    return f;
-};
+            var createHandlers = function (track) {
+                for (var i = 0; i < inputs.length - 1; i++) {
+                    var handle = document.createElement('div');
+                    addClass(handle, 'limper-handle');
+                    handle.setAttribute('limperidx', i);
+                    track.appendChild(handle);
+                    handlers.push(handle);
+                    handle.addEventListener('mousedown', onMouseDown);
+                }
+            };
+
+            var createZones = function (track) {
+                var colors = ['red', 'yellow', 'green'];
+                for (var i = 0; i < inputs.length; i++) {
+                    var zone = document.createElement('div');
+                    addClass(zone, 'limper-zone');
+                    zones.push(track.appendChild(zone));
+                    zones[i].style['background-color'] = colors[i];
+                }
+            };
+
+            var createTooltips = function (track) {
+                for (var i = 0; i < inputs.length; i++) {
+                    var tooltip = document.createElement('div');
+                    addClass(tooltip, 'limper-tooltip');
+                    track.appendChild(tooltip);
+                    tooltips.push(tooltip);
+                }
+            };
+
+            var createElements = function() {
+                var track = document.createElement('div');
+                addClass(track, 'limper-track');
+                el.appendChild(track);
+                createZones(track);
+                createTooltips(track);
+                createHandlers(track);
+            };
+
+            var isNumeric = function(n) {
+                return !isNaN(parseFloat(n)) && isFinite(n);
+            };
+
+            var computeInitialValues = function() {
+                var aggregated = 0;
+                var allValidValues = true;
+                for (var i = 0; i < inputs.length; i++) {
+                    var value = inputs[i].getAttribute('value');
+                    if (!isNumeric(value)) {
+                        allValidValues = false;
+                    } else {
+                        aggregated += parseFloat(value);
+                        values.push(aggregated);
+                    }
+                }
+                if (aggregated != total || !allValidValues) {
+                    values = [];
+                    var acc = 0;
+                    for (var i = 0; i < inputs.length - 1; i++) {
+                        var increment = (total / inputs.length).toFixed(2);
+                        acc += parseFloat(increment);
+                        inputs[i].setAttribute('value', increment);
+                        values.push(acc);
+                    }
+                    inputs[inputs.length - 1].setAttribute('value', total - acc);
+                    values.push(total);
+                }
+            };
+
+            var positionZones = function() {
+                var prevVal = 0;
+                for (var i = 0; i < zones.length; i++) {
+                    zones[i].style.left = prevVal + '%';
+                    zones[i].style.width = (values[i] - prevVal) + '%';
+                    prevVal = values[i];
+                }
+            };
+
+            var positionHandlers = function() {
+                for (var i = 0; i < values.length - 1; i++) {
+                    handlers[i].style.left = values[i] + '%';
+                }
+            };
+
+            var positionElements = function() {
+                    positionZones();
+                    positionHandlers();
+            };
+
+            var emitChange = function() {
+                if (document.createEvent) {
+                    var event = document.createEvent('HTMLEvents');
+                    event.initEvent('change', true, false);
+                    el.dispatchEvent(event);
+                } else {
+                    el.fireEvent('onchange');
+                }
+            }
+
+            //Returns true if it is a DOM element
+            function isElement(o){
+                return (
+                    typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
+                    o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
+                );
+            }
+
+            return {
+                init: function (selectors, options) {
+                    var idlimper = '';
+                    var lastelement = null;
+                    for (var i = 0; i < selectors.length; i++) {
+                        var selector = selectors[i];
+                        if (isElement(selector)) {
+                            element = selector;
+                        } else {
+                            var element = document.querySelector(selector);
+                        }
+                        if (!element) {
+                            throw "element " + selector + " does not exist"
+                        }
+                        var id = element.getAttribute('id');
+                        if (i > 0) {
+                            idlimper += "-";
+                        }
+                        idlimper += id;
+                        inputs.push(element);
+                        lastelement = element;
+                    }
+
+                    idlimper += "-limper";
+
+                    el = document.createElement('div');
+                    addClass(el, 'limperslider');
+
+                    if (options && options.element) {
+                        options.element.appendChild(el);
+                        this.element = options.element;
+                    } else if (options && options.selector) {
+                        this.element = document.querySelector(options.selector);
+                        this.element.appendChild(el);
+                    } else {
+                        lastelement.insertAdjacentElement('afterend', el);
+                        this.element = lastelement;
+                    }
+
+                    el.setAttribute('id', idlimper);
+
+                    hideInputs(selectors);
+                    computeInitialValues();
+                    createElements();
+                    positionElements();
+                },
+
+            }
+        })();
+
+        var f = new F();
+
+        f.init(selectors, options);
+        return f;
+    };
+})();
 
 /* AMD Compatibility */
-window.limperslider = limperslider;
 
 if (typeof define === "function" && define.amd) {
   define("limperslider", [], function() {
