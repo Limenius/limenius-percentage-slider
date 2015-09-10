@@ -143,17 +143,17 @@ var limperslider = (function(){
                         this.state.values.push(aggregated);
                     }
                 }
-                if (aggregated != this.state.total || !allValidValues) {
+                if (aggregated != this.state.options.total || !allValidValues) {
                     this.state.values = [];
                     var acc = 0;
                     for (var i = 0; i < this.state.inputs.length - 1; i++) {
-                        var increment = (this.state.total / this.state.inputs.length).toFixed(2);
+                        var increment = (this.state.options.total / this.state.inputs.length).toFixed(2);
                         acc += parseFloat(increment);
                         this.state.inputs[i].setAttribute('value', increment);
                         this.state.values.push(acc);
                     }
-                    this.state.inputs[this.state.inputs.length - 1].setAttribute('value', this.state.total - acc);
-                    this.state.values.push(this.state.total);
+                    this.state.inputs[this.state.inputs.length - 1].setAttribute('value', this.state.options.total - acc);
+                    this.state.values.push(this.state.options.total);
                 }
             };
 
@@ -188,20 +188,41 @@ var limperslider = (function(){
             }
 
             //Returns true if it is a DOM element
-            function isElement(o){
+            var isElement = function(o){
                 return (
                     typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
-                    o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
+                    o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
                 );
-            }
+            };
+
+            var setOptions = function(defaults, options) {
+                var obj = {};
+                var getOption = function(opt) {
+                    switch (opt) {
+                        case 'total':
+                            return options.total;
+                            break;
+                        default:
+                            return options[opt];
+                    }
+                };
+                for (var opt in defaults) {
+                    obj[opt] = options && (opt in options) ? getOption(opt) : defaults[opt];
+                }
+                return obj;
+            };
 
             return {
                 init: function (selectors, options) {
                     var idlimper = '';
                     var lastElement = null;
+
                     this.onMouseDown = onMouseDown.bind(this);
                     this.onMouseUp = onMouseUp.bind(this);
                     this.onMouseMove = onMouseMove.bind(this);
+
+                    this.state.options = setOptions(this.state.options, options);
+
                     for (var i = 0; i < selectors.length; i++) {
                         var selector = selectors[i];
                         var selement = null;
@@ -226,6 +247,7 @@ var limperslider = (function(){
 
                     this.state.el = document.createElement('div');
                     addClass(this.state.el, 'limperslider');
+
 
                     if (options && options.element) {
                         options.element.appendChild(this.state.el);
@@ -264,8 +286,12 @@ var limperslider = (function(){
             zones: [],
             tooltips: [],
             values: [],
-            total: 100,
             beingMoved: null,
+            options: {
+                selector: null,
+                element: null,
+                total: 100,
+            }
 
         }
         f.onMouseUp = null;
