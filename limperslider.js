@@ -5,28 +5,13 @@ var limperslider = (function(){
 
         function F() {};
         F.prototype = (function() {
-            var hideInputs = function(selectors) {
-                for (var i = 0; i < this.inputs.length; i++) {
-                    var input = this.inputs[i];
-                    input.setAttribute('readonly', 'readonly');
-                }
-            };
-
-            var addClass = function (element, className) {
-                if (element.classList) {
-                    element.classList.add(className);
-                } else {
-                    element.className += ' ' + className;
-                }
-            };
-
             var onMouseUp = function(e) {
                 document.removeEventListener("touchmove", this.onMouseMove, false);
                 document.removeEventListener("touchend", this.onMouseUp, false);
             };
 
             var onMouseMove = function(e) {
-                var handleIdx = this.beingMoved.getAttribute('limperidx');
+                var handleIdx = this.state.beingMoved.getAttribute('limperidx');
                 var percentage = getPercentage.call(this, e);
                 setNewPosition.call(this, handleIdx, percentage);
                 emitChange.call(this);
@@ -45,39 +30,54 @@ var limperslider = (function(){
                 if(e.preventDefault) e.preventDefault();
                 e.cancelBubble=true;
                 e.returnValue=false;
-                this.beingMoved = e.target;
+                this.state.beingMoved = e.target;
                 return false;
             };
 
+            var hideInputs = function(selectors) {
+                for (var i = 0; i < this.state.inputs.length; i++) {
+                    var input = this.state.inputs[i];
+                    input.setAttribute('readonly', 'readonly');
+                }
+            };
+
+            var addClass = function (element, className) {
+                if (element.classList) {
+                    element.classList.add(className);
+                } else {
+                    element.className += ' ' + className;
+                }
+            };
+
             var setNewPosition = function(handleIdx, percentage) {
-                this.values[handleIdx] = percentage;
+                this.state.values[handleIdx] = percentage;
                 positionElements.call(this);
                 setInputsFromPosition.call(this);
             };
 
             var setInputsFromPosition = function() {
                 var prevVal = 0;
-                for (var i = 0; i < this.inputs.length; i++) {
-                    this.inputs[i].setAttribute('value', (this.values[i] - prevVal).toFixed(2));
-                    prevVal = this.values[i];
+                for (var i = 0; i < this.state.inputs.length; i++) {
+                    this.state.inputs[i].setAttribute('value', (this.state.values[i] - prevVal).toFixed(2));
+                    prevVal = this.state.values[i];
                 }
             };
 
             var getPercentage = function(e) {
                 var eventPosition = e.pageX;
-                var rect = this.el.getBoundingClientRect();
+                var rect = this.state.el.getBoundingClientRect();
                 var offset = rect.left;
                 var size = rect.right - rect.left;
                 var distanceToSlide = eventPosition - offset;
                 var percentage = (distanceToSlide / size) * 100;
-                var handleIdx = parseInt(this.beingMoved.getAttribute('limperidx'), 10);
+                var handleIdx = parseInt(this.state.beingMoved.getAttribute('limperidx'), 10);
                 var maxPercentage = 100;
-                if (handleIdx < this.handlers.length - 1) {
-                    maxPercentage = this.values[handleIdx + 1];
+                if (handleIdx < this.state.handlers.length - 1) {
+                    maxPercentage = this.state.values[handleIdx + 1];
                 }
                 var minPercentage = 0;
                 if (handleIdx > 0) {
-                    minPercentage = this.values[handleIdx - 1];
+                    minPercentage = this.state.values[handleIdx - 1];
                 }
                 if (percentage < minPercentage) {
                     return minPercentage;
@@ -88,12 +88,12 @@ var limperslider = (function(){
             };
 
             var createHandlers = function (track) {
-                for (var i = 0; i < this.inputs.length - 1; i++) {
+                for (var i = 0; i < this.state.inputs.length - 1; i++) {
                     var handle = document.createElement('div');
                     addClass(handle, 'limper-handle');
                     handle.setAttribute('limperidx', i);
                     track.appendChild(handle);
-                    this.handlers.push(handle);
+                    this.state.handlers.push(handle);
                     handle.addEventListener('mousedown', this.onMouseDown);
                     handle.addEventListener('touchstart', this.onMouseDown);
                 }
@@ -101,27 +101,27 @@ var limperslider = (function(){
 
             var createZones = function (track) {
                 var colors = ['red', 'yellow', 'green'];
-                for (var i = 0; i < this.inputs.length; i++) {
+                for (var i = 0; i < this.state.inputs.length; i++) {
                     var zone = document.createElement('div');
                     addClass(zone, 'limper-zone');
-                    this.zones.push(track.appendChild(zone));
-                    this.zones[i].style['background-color'] = colors[i];
+                    this.state.zones.push(track.appendChild(zone));
+                    this.state.zones[i].style['background-color'] = colors[i];
                 }
             };
 
             var createTooltips = function (track) {
-                for (var i = 0; i < this.inputs.length; i++) {
+                for (var i = 0; i < this.state.inputs.length; i++) {
                     var tooltip = document.createElement('div');
                     addClass(tooltip, 'limper-tooltip');
                     track.appendChild(tooltip);
-                    this.tooltips.push(tooltip);
+                    this.state.tooltips.push(tooltip);
                 }
             };
 
             var createElements = function() {
                 var track = document.createElement('div');
                 addClass(track, 'limper-track');
-                this.el.appendChild(track);
+                this.state.el.appendChild(track);
                 createZones.call(this, track);
                 createTooltips.call(this, track);
                 createHandlers.call(this, track);
@@ -134,41 +134,41 @@ var limperslider = (function(){
             var computeInitialValues = function() {
                 var aggregated = 0;
                 var allValidValues = true;
-                for (var i = 0; i < this.inputs.length; i++) {
-                    var value = this.inputs[i].getAttribute('value');
+                for (var i = 0; i < this.state.inputs.length; i++) {
+                    var value = this.state.inputs[i].getAttribute('value');
                     if (!isNumeric(value)) {
                         allValidValues = false;
                     } else {
                         aggregated += parseFloat(value);
-                        this.values.push(aggregated);
+                        this.state.values.push(aggregated);
                     }
                 }
-                if (aggregated != this.total || !allValidValues) {
-                    this.values = [];
+                if (aggregated != this.state.total || !allValidValues) {
+                    this.state.values = [];
                     var acc = 0;
-                    for (var i = 0; i < this.inputs.length - 1; i++) {
-                        var increment = (this.total / this.inputs.length).toFixed(2);
+                    for (var i = 0; i < this.state.inputs.length - 1; i++) {
+                        var increment = (this.state.total / this.state.inputs.length).toFixed(2);
                         acc += parseFloat(increment);
-                        this.inputs[i].setAttribute('value', increment);
-                        this.values.push(acc);
+                        this.state.inputs[i].setAttribute('value', increment);
+                        this.state.values.push(acc);
                     }
-                    this.inputs[this.inputs.length - 1].setAttribute('value', this.total - acc);
-                    this.values.push(this.total);
+                    this.state.inputs[this.state.inputs.length - 1].setAttribute('value', this.state.total - acc);
+                    this.state.values.push(this.state.total);
                 }
             };
 
             var positionZones = function() {
                 var prevVal = 0;
-                for (var i = 0; i < this.zones.length; i++) {
-                    this.zones[i].style.left = prevVal + '%';
-                    this.zones[i].style.width = (this.values[i] - prevVal) + '%';
-                    prevVal = this.values[i];
+                for (var i = 0; i < this.state.zones.length; i++) {
+                    this.state.zones[i].style.left = prevVal + '%';
+                    this.state.zones[i].style.width = (this.state.values[i] - prevVal) + '%';
+                    prevVal = this.state.values[i];
                 }
             };
 
             var positionHandlers = function() {
-                for (var i = 0; i < this.values.length - 1; i++) {
-                    this.handlers[i].style.left = this.values[i] + '%';
+                for (var i = 0; i < this.state.values.length - 1; i++) {
+                    this.state.handlers[i].style.left = this.state.values[i] + '%';
                 }
             };
 
@@ -181,9 +181,9 @@ var limperslider = (function(){
                 if (document.createEvent) {
                     var event = document.createEvent('HTMLEvents');
                     event.initEvent('change', true, false);
-                    this.el.dispatchEvent(event);
+                    this.state.el.dispatchEvent(event);
                 } else {
-                    this.el.fireEvent('onchange');
+                    this.state.el.fireEvent('onchange');
                 }
             }
 
@@ -218,27 +218,27 @@ var limperslider = (function(){
                             idlimper += "-";
                         }
                         idlimper += id;
-                        this.inputs.push(selement);
+                        this.state.inputs.push(selement);
                         lastElement = selement;
                     }
 
                     idlimper += "-limper";
 
-                    this.el = document.createElement('div');
-                    addClass(this.el, 'limperslider');
+                    this.state.el = document.createElement('div');
+                    addClass(this.state.el, 'limperslider');
 
                     if (options && options.element) {
-                        options.element.appendChild(this.el);
-                        this.anchor = options.element;
+                        options.element.appendChild(this.state.el);
+                        this.state.anchor = options.element;
                     } else if (options && options.selector) {
-                        this.anchor = document.querySelector(options.selector);
-                        this.anchor.appendChild(this.el);
+                        this.state.anchor = document.querySelector(options.selector);
+                        this.state.anchor.appendChild(this.state.el);
                     } else {
-                        lastElement.insertAdjacentElement('afterend', this.el);
-                        this.anchor = lastElement;
+                        lastElement.insertAdjacentElement('afterend', this.state.el);
+                        this.state.anchor = lastElement;
                     }
 
-                    this.el.setAttribute('id', idlimper);
+                    this.state.el.setAttribute('id', idlimper);
 
                     hideInputs.call(this, selectors);
                     computeInitialValues.call(this);
@@ -248,23 +248,26 @@ var limperslider = (function(){
                 },
 
                 destroy: function() {
-                    if (this.el && this.el.parentNode) {
-                        this.el.parentNode.removeChild(this.el);
+                    if (this.state.el && this.state.el.parentNode) {
+                        this.state.el.parentNode.removeChild(this.state.el);
                     }
                 }
             }
         })();
 
         var f = new F();
-        f.anchor = null;
-        f.el = null;
-        f.inputs = [];
-        f.handlers = [];
-        f.zones = [];
-        f.tooltips = [];
-        f.values = [];
-        f.total = 100;
-        f.beingMoved = null;
+        f.state = {
+            anchor : null,
+            el: null,
+            inputs: [],
+            handlers: [],
+            zones: [],
+            tooltips: [],
+            values: [],
+            total: 100,
+            beingMoved: null,
+
+        }
         f.onMouseUp = null;
         f.onMouseDown = null;
         f.onMouseMove = null;
