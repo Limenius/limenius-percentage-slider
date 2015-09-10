@@ -1,23 +1,13 @@
 'use strict';
 
 var limperslider = (function(){
-    return limperslider;
     function limperslider(selectors, options) {
 
         function F() {};
         F.prototype = (function() {
-            var element = null;
-            var el = null;
-            var inputs = [];
-            var handlers = [];
-            var zones = [];
-            var tooltips = [];
-            var values = [];
-            var total = 100;
-            var beingMoved = null;
             var hideInputs = function(selectors) {
-                for (var i = 0; i < inputs.length; i++) {
-                    var input = inputs[i];
+                for (var i = 0; i < this.inputs.length; i++) {
+                    var input = this.inputs[i];
                     input.setAttribute('readonly', 'readonly');
                 }
             };
@@ -51,20 +41,20 @@ var limperslider = (function(){
                 if(e.preventDefault) e.preventDefault();
                 e.cancelBubble=true;
                 e.returnValue=false;
-                beingMoved = e.target;
+                this.beingMoved = e.target;
                 return false;
             };
 
             var setNewPosition = function(handleIdx, percentage) {
-                values[handleIdx] = percentage;
+                this.values[handleIdx] = percentage;
                 positionElements();
                 setInputsFromPosition();
             };
 
             var setInputsFromPosition = function() {
                 var prevVal = 0;
-                for (var i = 0; i < inputs.length; i++) {
-                    inputs[i].setAttribute('value', (values[i] - prevVal).toFixed(2));
+                for (var i = 0; i < this.inputs.length; i++) {
+                    this.inputs[i].setAttribute('value', (values[i] - prevVal).toFixed(2));
                     prevVal = values[i];
                 }
             };
@@ -78,12 +68,12 @@ var limperslider = (function(){
                 var percentage = (distanceToSlide / size) * 100;
                 var handleIdx = parseInt(beingMoved.getAttribute('limperidx'), 10);
                 var maxPercentage = 100;
-                if (handleIdx < handlers.length - 1) {
-                    maxPercentage = values[handleIdx + 1];
+                if (handleIdx < this.handlers.length - 1) {
+                    maxPercentage = this.values[handleIdx + 1];
                 }
                 var minPercentage = 0;
                 if (handleIdx > 0) {
-                    minPercentage = values[handleIdx - 1];
+                    minPercentage = this.values[handleIdx - 1];
                 }
                 if (percentage < minPercentage) {
                     return minPercentage;
@@ -94,42 +84,42 @@ var limperslider = (function(){
             };
 
             var createHandlers = function (track) {
-                for (var i = 0; i < inputs.length - 1; i++) {
+                for (var i = 0; i < this.inputs.length - 1; i++) {
                     var handle = document.createElement('div');
                     addClass(handle, 'limper-handle');
                     handle.setAttribute('limperidx', i);
                     track.appendChild(handle);
-                    handlers.push(handle);
+                    this.handlers.push(handle);
                     handle.addEventListener('mousedown', onMouseDown);
                 }
             };
 
             var createZones = function (track) {
                 var colors = ['red', 'yellow', 'green'];
-                for (var i = 0; i < inputs.length; i++) {
+                for (var i = 0; i < this.inputs.length; i++) {
                     var zone = document.createElement('div');
                     addClass(zone, 'limper-zone');
-                    zones.push(track.appendChild(zone));
-                    zones[i].style['background-color'] = colors[i];
+                    this.zones.push(track.appendChild(zone));
+                    this.zones[i].style['background-color'] = colors[i];
                 }
             };
 
             var createTooltips = function (track) {
-                for (var i = 0; i < inputs.length; i++) {
+                for (var i = 0; i < this.inputs.length; i++) {
                     var tooltip = document.createElement('div');
                     addClass(tooltip, 'limper-tooltip');
                     track.appendChild(tooltip);
-                    tooltips.push(tooltip);
+                    this.tooltips.push(tooltip);
                 }
             };
 
             var createElements = function() {
                 var track = document.createElement('div');
                 addClass(track, 'limper-track');
-                el.appendChild(track);
-                createZones(track);
-                createTooltips(track);
-                createHandlers(track);
+                this.el.appendChild(track);
+                createZones.call(this, track);
+                createTooltips.call(this, track);
+                createHandlers.call(this, track);
             };
 
             var isNumeric = function(n) {
@@ -139,47 +129,47 @@ var limperslider = (function(){
             var computeInitialValues = function() {
                 var aggregated = 0;
                 var allValidValues = true;
-                for (var i = 0; i < inputs.length; i++) {
-                    var value = inputs[i].getAttribute('value');
+                for (var i = 0; i < this.inputs.length; i++) {
+                    var value = this.inputs[i].getAttribute('value');
                     if (!isNumeric(value)) {
                         allValidValues = false;
                     } else {
                         aggregated += parseFloat(value);
-                        values.push(aggregated);
+                        this.values.push(aggregated);
                     }
                 }
-                if (aggregated != total || !allValidValues) {
-                    values = [];
+                if (aggregated != this.total || !allValidValues) {
+                    this.values = [];
                     var acc = 0;
-                    for (var i = 0; i < inputs.length - 1; i++) {
-                        var increment = (total / inputs.length).toFixed(2);
+                    for (var i = 0; i < this.inputs.length - 1; i++) {
+                        var increment = (this.total / this.inputs.length).toFixed(2);
                         acc += parseFloat(increment);
-                        inputs[i].setAttribute('value', increment);
-                        values.push(acc);
+                        this.inputs[i].setAttribute('value', increment);
+                        this.values.push(acc);
                     }
-                    inputs[inputs.length - 1].setAttribute('value', total - acc);
-                    values.push(total);
+                    this.inputs[this.inputs.length - 1].setAttribute('value', this.total - acc);
+                    this.values.push(this.total);
                 }
             };
 
             var positionZones = function() {
                 var prevVal = 0;
-                for (var i = 0; i < zones.length; i++) {
-                    zones[i].style.left = prevVal + '%';
-                    zones[i].style.width = (values[i] - prevVal) + '%';
-                    prevVal = values[i];
+                for (var i = 0; i < this.zones.length; i++) {
+                    this.zones[i].style.left = prevVal + '%';
+                    this.zones[i].style.width = (this.values[i] - prevVal) + '%';
+                    prevVal = this.values[i];
                 }
             };
 
             var positionHandlers = function() {
-                for (var i = 0; i < values.length - 1; i++) {
-                    handlers[i].style.left = values[i] + '%';
+                for (var i = 0; i < this.values.length - 1; i++) {
+                    this.handlers[i].style.left = this.values[i] + '%';
                 }
             };
 
             var positionElements = function() {
-                    positionZones();
-                    positionHandlers();
+                    positionZones.call(this);
+                    positionHandlers.call(this);
             };
 
             var emitChange = function() {
@@ -203,58 +193,74 @@ var limperslider = (function(){
             return {
                 init: function (selectors, options) {
                     var idlimper = '';
-                    var lastelement = null;
+                    var lastElement = null;
                     for (var i = 0; i < selectors.length; i++) {
                         var selector = selectors[i];
+                        var selement = null;
                         if (isElement(selector)) {
-                            element = selector;
+                            selement = selector;
                         } else {
-                            var element = document.querySelector(selector);
+                            selement = document.querySelector(selector);
                         }
-                        if (!element) {
+                        if (!selement) {
                             throw "element " + selector + " does not exist"
                         }
-                        var id = element.getAttribute('id');
+                        var id = selement.getAttribute('id');
                         if (i > 0) {
                             idlimper += "-";
                         }
                         idlimper += id;
-                        inputs.push(element);
-                        lastelement = element;
+                        this.inputs.push(selement);
+                        lastElement = selement;
                     }
 
                     idlimper += "-limper";
 
-                    el = document.createElement('div');
-                    addClass(el, 'limperslider');
+                    this.el = document.createElement('div');
+                    addClass(this.el, 'limperslider');
 
                     if (options && options.element) {
                         options.element.appendChild(el);
-                        this.element = options.element;
+                        this.anchor = options.element;
                     } else if (options && options.selector) {
-                        this.element = document.querySelector(options.selector);
-                        this.element.appendChild(el);
+                        this.anchor = document.querySelector(options.selector);
+                        this.anchor.appendChild(el);
                     } else {
-                        lastelement.insertAdjacentElement('afterend', el);
-                        this.element = lastelement;
+                        lastElement.insertAdjacentElement('afterend', this.el);
+                        this.anchor = lastElement;
                     }
 
-                    el.setAttribute('id', idlimper);
+                    this.el.setAttribute('id', idlimper);
 
-                    hideInputs(selectors);
-                    computeInitialValues();
-                    createElements();
-                    positionElements();
+                    hideInputs.call(this, selectors);
+                    computeInitialValues.call(this);
+                    createElements.call(this);
+                    positionElements.call(this);
                 },
 
+                destroy: function() {
+                    if (this.el && this.el.parentNode) {
+                        this.el.parentNode.removeChild(this.el);
+                    }
+                }
             }
         })();
 
         var f = new F();
+        f.anchor = null;
+        f.el = null;
+        f.inputs = [];
+        f.handlers = [];
+        f.zones = [];
+        f.tooltips = [];
+        f.values = [];
+        f.total = 100;
+        f.beingMoved = null;
 
         f.init(selectors, options);
         return f;
     };
+    return limperslider;
 })();
 
 /* AMD Compatibility */

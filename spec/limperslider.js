@@ -1,6 +1,7 @@
 'use strict';
 
 describe("limperslider", function() {
+    var slider;
     var hasClass = function(el, className) {
         if (el.classList) {
             return el.classList.contains(className);
@@ -10,7 +11,11 @@ describe("limperslider", function() {
     };
 
     beforeEach(function() {
-        new limperslider(["#percentage1", "#percentage2", "#percentage3"]);
+        slider = new limperslider(["#percentage1", "#percentage2", "#percentage3"]);
+    });
+
+    afterEach(function() {
+        slider.destroy();
     });
 
     it("Initialization creates .limperslider", function() {
@@ -27,12 +32,14 @@ describe("limperslider", function() {
     });
 
     it("Inputs readonly", function() {
-        var thrower = function() {
-            new limperslider(["#percentage1", "#percentage2", "#percentage3"]);
-        };
         var element = document.querySelector("#percentage2");
         var readonly = element.getAttribute('readonly');
         expect(readonly).toEqual('readonly');
+    });
+
+    it("Destruction destroys", function() {
+        var elements = document.querySelectorAll('.limper-track');
+        expect(elements.length).toEqual(1);
     });
 
     it("Initialization creates handles", function() {
