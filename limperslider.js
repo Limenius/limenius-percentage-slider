@@ -21,8 +21,8 @@ var limperslider = (function(){
             };
 
             var onMouseUp = function(e) {
-                document.removeEventListener("mousemove", this.onMouseMove, false);
-                document.removeEventListener("mouseup", this.onMouseUp, false);
+                document.removeEventListener("touchmove", this.onMouseMove, false);
+                document.removeEventListener("touchend", this.onMouseUp, false);
             };
 
             var onMouseMove = function(e) {
@@ -34,9 +34,13 @@ var limperslider = (function(){
 
             var onMouseDown = function(e) {
                 document.removeEventListener("mousemove", this.onMouseMove, false);
-                document.removeEventListener("mouseup", this.onMouseUpg, false);
+                document.removeEventListener("mouseup", this.onMouseUp, false);
                 document.addEventListener("mousemove", this.onMouseMove, false);
                 document.addEventListener("mouseup", this.onMouseUp, false);
+                document.removeEventListener("touchmove", this.onMouseMove, false);
+                document.removeEventListener("touchend", this.onMouseUp, false);
+                document.addEventListener("touchmove", this.onMouseMove, false);
+                document.addEventListener("touchend", this.onMouseUp, false);
                 if(e.stopPropagation) e.stopPropagation();
                 if(e.preventDefault) e.preventDefault();
                 e.cancelBubble=true;
@@ -91,6 +95,7 @@ var limperslider = (function(){
                     track.appendChild(handle);
                     this.handlers.push(handle);
                     handle.addEventListener('mousedown', this.onMouseDown);
+                    handle.addEventListener('touchstart', this.onMouseDown);
                 }
             };
 

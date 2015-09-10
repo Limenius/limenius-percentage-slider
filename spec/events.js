@@ -33,6 +33,12 @@ describe("events", function() {
                 case "mousemove":
                     eventClass = "MouseEvents";
                     break;
+
+                case "touchstart":
+                case "touchend":
+                case "touchmove":
+                    eventClass = "UIEvents";
+                    break;
     
                 case "focus":
                 case "change":
@@ -87,11 +93,23 @@ describe("events", function() {
         spyOn(spy, 'changed') 
         element.addEventListener('change', spy.changed, false);
         fireEvent(handler, 'mousedown');
-        var event = document.createEvent('MouseEvents');
-        event.initEvent('mousemove', true, true);
-        handler.dispatchEvent(event);
         fireEvent(handler, 'mousemove');
         fireEvent(handler, 'mouseup');
+        expect(spy.changed).toHaveBeenCalled()
+    });
+
+    it("touchdown - touchmove emits change", function() {
+        var element = document.querySelector('#slider-holder');
+        var handler = element.querySelector('.limper-handle');
+        var spy = {
+            changed : function() {
+            }
+        };
+        spyOn(spy, 'changed') 
+        element.addEventListener('change', spy.changed, false);
+        fireEvent(handler, 'touchstart');
+        fireEvent(handler, 'touchmove');
+        fireEvent(handler, 'touchend');
         expect(spy.changed).toHaveBeenCalled()
     });
 });
