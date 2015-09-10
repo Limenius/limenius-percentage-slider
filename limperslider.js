@@ -21,22 +21,22 @@ var limperslider = (function(){
             };
 
             var onMouseUp = function(e) {
-                document.removeEventListener("mousemove", onMouseMove, false);
-                document.removeEventListener("mouseup", onMouseUp, false);
+                document.removeEventListener("mousemove", this.onMouseMove, false);
+                document.removeEventListener("mouseup", this.onMouseUp, false);
             };
 
             var onMouseMove = function(e) {
-                var handleIdx = beingMoved.getAttribute('limperidx');
-                var percentage = getPercentage(e);
-                setNewPosition(handleIdx, percentage);
-                emitChange();
+                var handleIdx = this.beingMoved.getAttribute('limperidx');
+                var percentage = getPercentage.call(this, e);
+                setNewPosition.call(this, handleIdx, percentage);
+                emitChange.call(this);
             };
 
             var onMouseDown = function(e) {
-                document.removeEventListener("mousemove", onMouseMove, false);
-                document.removeEventListener("mouseup", onMouseUp, false);
-                document.addEventListener("mousemove", onMouseMove, false);
-                document.addEventListener("mouseup", onMouseUp, false);
+                document.removeEventListener("mousemove", this.onMouseMove, false);
+                document.removeEventListener("mouseup", this.onMouseUpg, false);
+                document.addEventListener("mousemove", this.onMouseMove, false);
+                document.addEventListener("mouseup", this.onMouseUp, false);
                 if(e.stopPropagation) e.stopPropagation();
                 if(e.preventDefault) e.preventDefault();
                 e.cancelBubble=true;
@@ -47,26 +47,26 @@ var limperslider = (function(){
 
             var setNewPosition = function(handleIdx, percentage) {
                 this.values[handleIdx] = percentage;
-                positionElements();
-                setInputsFromPosition();
+                positionElements.call(this);
+                setInputsFromPosition.call(this);
             };
 
             var setInputsFromPosition = function() {
                 var prevVal = 0;
                 for (var i = 0; i < this.inputs.length; i++) {
-                    this.inputs[i].setAttribute('value', (values[i] - prevVal).toFixed(2));
-                    prevVal = values[i];
+                    this.inputs[i].setAttribute('value', (this.values[i] - prevVal).toFixed(2));
+                    prevVal = this.values[i];
                 }
             };
 
             var getPercentage = function(e) {
                 var eventPosition = e.pageX;
-                var rect = el.getBoundingClientRect();
+                var rect = this.el.getBoundingClientRect();
                 var offset = rect.left;
                 var size = rect.right - rect.left;
                 var distanceToSlide = eventPosition - offset;
                 var percentage = (distanceToSlide / size) * 100;
-                var handleIdx = parseInt(beingMoved.getAttribute('limperidx'), 10);
+                var handleIdx = parseInt(this.beingMoved.getAttribute('limperidx'), 10);
                 var maxPercentage = 100;
                 if (handleIdx < this.handlers.length - 1) {
                     maxPercentage = this.values[handleIdx + 1];
@@ -90,7 +90,7 @@ var limperslider = (function(){
                     handle.setAttribute('limperidx', i);
                     track.appendChild(handle);
                     this.handlers.push(handle);
-                    handle.addEventListener('mousedown', onMouseDown);
+                    handle.addEventListener('mousedown', this.onMouseDown);
                 }
             };
 
@@ -176,9 +176,9 @@ var limperslider = (function(){
                 if (document.createEvent) {
                     var event = document.createEvent('HTMLEvents');
                     event.initEvent('change', true, false);
-                    el.dispatchEvent(event);
+                    this.el.dispatchEvent(event);
                 } else {
-                    el.fireEvent('onchange');
+                    this.el.fireEvent('onchange');
                 }
             }
 
@@ -194,6 +194,9 @@ var limperslider = (function(){
                 init: function (selectors, options) {
                     var idlimper = '';
                     var lastElement = null;
+                    this.onMouseDown = onMouseDown.bind(this);
+                    this.onMouseUp = onMouseUp.bind(this);
+                    this.onMouseMove = onMouseMove.bind(this);
                     for (var i = 0; i < selectors.length; i++) {
                         var selector = selectors[i];
                         var selement = null;
@@ -220,11 +223,11 @@ var limperslider = (function(){
                     addClass(this.el, 'limperslider');
 
                     if (options && options.element) {
-                        options.element.appendChild(el);
+                        options.element.appendChild(this.el);
                         this.anchor = options.element;
                     } else if (options && options.selector) {
                         this.anchor = document.querySelector(options.selector);
-                        this.anchor.appendChild(el);
+                        this.anchor.appendChild(this.el);
                     } else {
                         lastElement.insertAdjacentElement('afterend', this.el);
                         this.anchor = lastElement;
@@ -236,6 +239,7 @@ var limperslider = (function(){
                     computeInitialValues.call(this);
                     createElements.call(this);
                     positionElements.call(this);
+
                 },
 
                 destroy: function() {
@@ -256,6 +260,9 @@ var limperslider = (function(){
         f.values = [];
         f.total = 100;
         f.beingMoved = null;
+        f.onMouseUp = null;
+        f.onMouseDown = null;
+        f.onMouseMove = null;
 
         f.init(selectors, options);
         return f;

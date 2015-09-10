@@ -11,6 +11,7 @@
     <input id="percentage1" type="text"/>
     <input id="percentage2" type="text"/>
     <input id="percentage3" type="text"/>
+    <div id="slider-holder"></div>
 
 <% with (scripts) { %>
   <% [].concat(polyfills, jasmine, boot, vendor, helpers, src, specs,reporters).forEach(function(script){ %>
