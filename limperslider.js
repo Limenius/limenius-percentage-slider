@@ -60,7 +60,7 @@ var limperslider = (function(){
             var setInputsFromPosition = function() {
                 var prevVal = 0;
                 for (var i = 0; i < this.state.inputs.length; i++) {
-                    this.state.inputs[i].setAttribute('value', (this.state.values[i] - prevVal).toFixed(2));
+                    this.state.inputs[i].setAttribute('value', (this.state.values[i] - prevVal).toFixed(this.state.options.decimals));
                     prevVal = this.state.values[i];
                 }
             };
@@ -139,12 +139,12 @@ var limperslider = (function(){
                     this.state.values = [];
                     var acc = 0;
                     for (var i = 0; i < this.state.inputs.length - 1; i++) {
-                        var increment = (this.state.options.total / this.state.inputs.length).toFixed(2);
+                        var increment = (this.state.options.total / this.state.inputs.length).toFixed(this.state.options.decimals);
                         acc += parseFloat(increment);
                         this.state.inputs[i].setAttribute('value', increment);
                         this.state.values.push(acc);
                     }
-                    this.state.inputs[this.state.inputs.length - 1].setAttribute('value', this.state.options.total - acc);
+                    this.state.inputs[this.state.inputs.length - 1].setAttribute('value', (this.state.options.total - acc).toFixed(this.state.options.decimals));
                     this.state.values.push(this.state.options.total);
                 }
             };
@@ -282,6 +282,7 @@ var limperslider = (function(){
                 selector: null,
                 element: null,
                 total: 100,
+                decimals: 0,
             }
 
         }

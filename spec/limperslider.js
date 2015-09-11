@@ -52,4 +52,20 @@ describe("limperslider", function() {
         expect(elements.length).toEqual(3);
     });
 
+    it("By default has no decimals", function() {
+        var element = document.querySelector('#percentage1');
+        expect(element.getAttribute('value')).toEqual('33');
+        var element = document.querySelector('#percentage3');
+        expect(element.getAttribute('value')).toEqual('34');
+    });
+    it("Decimals are configurable", function() {
+        var element = document.querySelector('#percentage1');
+        element.setAttribute('value', 0);
+        slider.destroy();
+        slider = new limperslider(["#percentage1", "#percentage2", "#percentage3"], {decimals: 3});
+        expect(element.getAttribute('value')).toEqual('33.333');
+        var element2 = document.querySelector('#percentage3');
+        expect(element2.getAttribute('value')).toEqual('33.334');
+    });
+
 });
