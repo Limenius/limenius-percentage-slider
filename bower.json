@@ -16,7 +16,9 @@
       ".bower.json",
       ".gitignore",
       ".jshintrc",
-      "README.md"
+      "README.md",
+      "example.html",
+      "doc"
   ],
   "main": "limperslider.js",
   "license": "MIT"

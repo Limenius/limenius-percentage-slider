@@ -102,12 +102,15 @@ var limperslider = (function(){
             };
 
             var createZones = function (track) {
-                var colors = ['red', 'yellow', 'green'];
                 for (var i = 0; i < this.state.inputs.length; i++) {
                     var zone = document.createElement('div');
                     addClass(zone, 'limper-zone');
                     this.state.zones.push(track.appendChild(zone));
-                    this.state.zones[i].style['background-color'] = colors[i];
+                    var color = this.state.options.defaultColor;
+                    if (this.state.options.colors[i]) {
+                        color = this.state.options.colors[i];
+                    }
+                    this.state.zones[i].style['background-color'] = color;
                 }
             };
 
@@ -283,6 +286,8 @@ var limperslider = (function(){
                 element: null,
                 total: 100,
                 decimals: 0,
+                colors : [],
+                defaultColor: '#eee'
             }
 
         }

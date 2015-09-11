@@ -25,6 +25,9 @@ This code does not need jQuery nor any other library to run. It just uses raw Ja
 
 * **options.selector**: Selector where the slider will be inserted.
 * **options.element**: HTMLElement where the slider will be inserted.
+* **options.total**: Total value to add up. Default is 100 (percentages).
+* **options.defaultColor**: Color of the segments.
+* **options.colors**: Array of the colors for each segment.
 
 ## RequireJs & AMD compatible
 

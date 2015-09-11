@@ -58,6 +58,7 @@ describe("limperslider", function() {
         var element = document.querySelector('#percentage3');
         expect(element.getAttribute('value')).toEqual('34');
     });
+
     it("Decimals are configurable", function() {
         var element = document.querySelector('#percentage1');
         element.setAttribute('value', 0);
@@ -66,6 +67,21 @@ describe("limperslider", function() {
         expect(element.getAttribute('value')).toEqual('33.333');
         var element2 = document.querySelector('#percentage3');
         expect(element2.getAttribute('value')).toEqual('33.334');
+    });
+
+    it("Colors are configurable", function() {
+        var element = document.querySelector('.limper-zone');
+        expect(element.style['background-color']).toEqual('rgb(238, 238, 238)');
+        slider.destroy();
+        slider = new limperslider(["#percentage1", "#percentage2", "#percentage3"], {defaultColor: "green"});
+        var element = document.querySelector('.limper-zone');
+        expect(element.style['background-color']).toEqual('green');
+        slider.destroy();
+        slider = new limperslider(["#percentage1", "#percentage2", "#percentage3"], {colors: ["green", "red"]});
+        var element = document.querySelectorAll('.limper-zone')[1];
+        expect(element.style['background-color']).toEqual('red');
+        var element = document.querySelectorAll('.limper-zone')[2];
+        expect(element.style['background-color']).toEqual('rgb(238, 238, 238)');
     });
 
 });
