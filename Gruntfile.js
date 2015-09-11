@@ -23,14 +23,23 @@ module.exports = function(grunt) {
       options: {
         jshintrc: '.jshintrc'
       }
+    },
+    docco: {
+        debug: {
+            src: ['limperslider.js'],
+            options: {
+                output: 'doccos/'
+            }
+        }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-docco');
 
   grunt.registerTask('test', ['jshint', 'jasmine']);
 
-  grunt.registerTask('default', ['test']);
+  grunt.registerTask('default', ['test', 'docco']);
 
 };
