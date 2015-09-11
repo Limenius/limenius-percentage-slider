@@ -1,6 +1,6 @@
 {
   "name": "limenius-percentage-slider",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Slider for percentages. Or segments that add up to a certain value",
   "keywords": [
     "slider",

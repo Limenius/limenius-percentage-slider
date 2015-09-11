@@ -8,9 +8,9 @@
 <% }) %>
 </head>
 <body>
-    <input id="percentage1" type="text"/>
-    <input id="percentage2" type="text"/>
-    <input id="percentage3" type="text"/>
+    <input id="percentage1" class="inputtest" type="text"/>
+    <input id="percentage2" class="inputtest" type="text"/>
+    <input id="percentage3" class="inputtest" type="text"/>
     <div id="slider-holder"></div>
 
 <% with (scripts) { %>

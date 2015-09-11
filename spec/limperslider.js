@@ -9,12 +9,20 @@ describe("limperslider", function() {
         }
     };
 
+    var resetInputs = function() {
+        var elements = document.querySelectorAll('.inputtest');
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].setAttribute('value', '');
+        }
+    };
+
     beforeEach(function() {
         slider = new limperslider(["#percentage1", "#percentage2", "#percentage3"]);
     });
 
     afterEach(function() {
         slider.destroy();
+        resetInputs();
     });
 
     it("Initialization creates .limperslider", function() {
