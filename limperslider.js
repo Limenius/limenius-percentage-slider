@@ -8,6 +8,8 @@ var limperslider = (function(){
             var onMouseUp = function(e) {
                 document.removeEventListener("touchmove", this.onMouseMove, false);
                 document.removeEventListener("touchend", this.onMouseUp, false);
+                document.removeEventListener("mousemove", this.onMouseMove, false);
+                document.removeEventListener("mouseup", this.onMouseUp, false);
             };
 
             var onMouseMove = function(e) {
