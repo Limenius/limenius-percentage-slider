@@ -52,7 +52,7 @@ var limperslider = (function(){
             };
 
             var setNewPosition = function(handleIdx, percentage) {
-                this.state.values[handleIdx] = percentage;
+                this.state.values[handleIdx] = (percentage / 100) * this.state.options.total;
                 positionElements.call(this);
                 setInputsFromPosition.call(this);
             };
@@ -75,11 +75,11 @@ var limperslider = (function(){
                 var handleIdx = parseInt(this.state.beingMoved.getAttribute('limperidx'), 10);
                 var maxPercentage = 100;
                 if (handleIdx < this.state.handlers.length - 1) {
-                    maxPercentage = this.state.values[handleIdx + 1];
+                    maxPercentage = 100 * this.state.values[handleIdx + 1] / this.state.options.total;
                 }
                 var minPercentage = 0;
                 if (handleIdx > 0) {
-                    minPercentage = this.state.values[handleIdx - 1];
+                    minPercentage = 100 * this.state.values[handleIdx - 1] / this.state.options.total;
                 }
                 if (percentage < minPercentage) {
                     return minPercentage;
@@ -152,15 +152,15 @@ var limperslider = (function(){
             var positionZones = function() {
                 var prevVal = 0;
                 for (var i = 0; i < this.state.zones.length; i++) {
-                    this.state.zones[i].style.left = prevVal + '%';
-                    this.state.zones[i].style.width = (this.state.values[i] - prevVal) + '%';
+                    this.state.zones[i].style.left = ((prevVal / this.state.options.total) * 100) + '%';
+                    this.state.zones[i].style.width = ((this.state.values[i] - prevVal) * 100 / this.state.options.total) + '%';
                     prevVal = this.state.values[i];
                 }
             };
 
             var positionHandlers = function() {
                 for (var i = 0; i < this.state.values.length - 1; i++) {
-                    this.state.handlers[i].style.left = this.state.values[i] + '%';
+                    this.state.handlers[i].style.left = (this.state.values[i] * 100 / this.state.options.total) + '%';
                 }
             };
 
