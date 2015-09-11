@@ -52,12 +52,4 @@ describe("limperslider", function() {
         expect(elements.length).toEqual(3);
     });
 
-    it("Initialization creates tooltips", function() {
-        var elements = document.querySelectorAll('.limper-tooltip');
-        expect(elements.length).toEqual(3);
-
-        slider.destroy();
-        slider = new limperslider(["#percentage1", "#percentage2", "#percentage3"], {total: 120});
-    });
-
 });

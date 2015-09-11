@@ -111,21 +111,11 @@ var limperslider = (function(){
                 }
             };
 
-            var createTooltips = function (track) {
-                for (var i = 0; i < this.state.inputs.length; i++) {
-                    var tooltip = document.createElement('div');
-                    addClass(tooltip, 'limper-tooltip');
-                    track.appendChild(tooltip);
-                    this.state.tooltips.push(tooltip);
-                }
-            };
-
             var createElements = function() {
                 var track = document.createElement('div');
                 addClass(track, 'limper-track');
                 this.state.el.appendChild(track);
                 createZones.call(this, track);
-                createTooltips.call(this, track);
                 createHandlers.call(this, track);
             };
 
@@ -286,7 +276,6 @@ var limperslider = (function(){
             inputs: [],
             handlers: [],
             zones: [],
-            tooltips: [],
             values: [],
             beingMoved: null,
             options: {
