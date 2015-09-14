@@ -11,7 +11,7 @@
   "eqnull"  : true,
   "node"    : true,
   "globals" : {
-    "LimperSlider" : false,
+    "Limperslider" : false,
     "document" : false,
     "it"         : false,
     "xit"        : false,

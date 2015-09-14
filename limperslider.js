@@ -13,7 +13,6 @@
     var root = (typeof self == 'object' && self.self == self && self) || (typeof global == 'object' && global.global == global && global);
 
     // AMD Compatibility
-    
     if (typeof define === "function" && define.amd) {
         define("limperslider", [], function() {
             root.Limperslider = factory(root);
@@ -22,8 +21,12 @@
     } else {
         root.Limperslider = factory(root);
     }
-}(function(root) {
+}(function() {
 
+    // Helpers
+    // -------
+
+    // Add a class to an element
     var addClass = function (element, className) {
         if (element.classList) {
             element.classList.add(className);
@@ -32,6 +35,7 @@
         }
     };
 
+    // Determine if a value is numeric
     var isNumeric = function(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
     };
@@ -44,28 +48,20 @@
         );
     };
 
+    // Calls the constructor, so it is properly initialized
     var Limperslider = function(selectors, options) {
-
-
         this.init(selectors, options);
     };
 
-
+    // Prototype methods
+    // -----------------
+    //
+    // These methods go into the prototype to make use of the *this* variable
+    // and internal state
     Limperslider.prototype = {
-        _onMouseUp: function(e) {
-            document.removeEventListener("touchmove", this.onMouseMove, false);
-            document.removeEventListener("touchend", this.onMouseUp, false);
-            document.removeEventListener("mousemove", this.onMouseMove, false);
-            document.removeEventListener("mouseup", this.onMouseUp, false);
-        },
 
-        _onMouseMove: function(e) {
-            var handleIdx = this.state.beingMoved.getAttribute('limperidx');
-            var percentage = this._getPercentage(e);
-            this._setNewPosition(handleIdx, percentage);
-            this._emitChange();
-        },
-
+        // On mouse down the world stops for us. We capture every move event until
+        // mouseup.
         _onMouseDown: function(e) {
             document.removeEventListener("mousemove", this.onMouseMove, false);
             document.removeEventListener("mouseup", this.onMouseUp, false);
@@ -83,6 +79,25 @@
             return false;
         },
 
+        // On mouse move we move handlers and update inputs.
+        _onMouseMove: function(e) {
+            var handleIdx = this.state.beingMoved.getAttribute('limperidx');
+            var percentage = this._getPercentage(e);
+            this._setNewPosition(handleIdx, percentage);
+            this._emitChange();
+        },
+
+        // On mouse up we release all listeners.
+        _onMouseUp: function(e) {
+            document.removeEventListener("touchmove", this.onMouseMove, false);
+            document.removeEventListener("touchend", this.onMouseUp, false);
+            document.removeEventListener("mousemove", this.onMouseMove, false);
+            document.removeEventListener("mouseup", this.onMouseUp, false);
+        },
+
+        // Disable inputs so they cannot be modified directly by the user
+        // otherwise we would have to check if the value is valid (all inputs 
+        // combined add up to *total* and update the handlers.
         _hideInputs: function(selectors) {
             for (var i = 0; i < this.state.inputs.length; i++) {
                 var input = this.state.inputs[i];
@@ -90,12 +105,14 @@
             }
         },
 
+        // Move handlers, update inputs.
         _setNewPosition: function(handleIdx, percentage) {
             this.state.values[handleIdx] = (percentage / 100) * this.state.options.total;
             this._positionElements();
             this._setInputsFromPosition();
         },
 
+        // Update inputs from position of the handlers.
         _setInputsFromPosition: function() {
             var prevVal = 0;
             for (var i = 0; i < this.state.inputs.length; i++) {
@@ -104,6 +121,8 @@
             }
         },
 
+        // Obtain the percentage that corresponds to the position of the mouse in
+        // the screen.
         _getPercentage: function(e) {
             var eventPosition = e.pageX;
             var rect = this.state.el.getBoundingClientRect();
@@ -128,6 +147,7 @@
             return percentage;
         },
 
+        // Create the handlers in their position
         _createHandlers: function (track) {
             for (var i = 0; i < this.state.inputs.length - 1; i++) {
                 var handle = document.createElement('div');
@@ -135,11 +155,13 @@
                 handle.setAttribute('limperidx', i);
                 track.appendChild(handle);
                 this.state.handlers.push(handle);
+                // Start listeing for mouse down events on these handlers.
                 handle.addEventListener('mousedown', this.onMouseDown);
                 handle.addEventListener('touchstart', this.onMouseDown);
             }
         },
 
+        // Create the visual zones of each segment.
         _createZones: function (track) {
             for (var i = 0; i < this.state.inputs.length; i++) {
                 var zone = document.createElement('div');
@@ -153,6 +175,7 @@
             }
         },
 
+        // Create all the elements of the slider.
         _createElements: function() {
             var track = document.createElement('div');
             addClass(track, 'limper-track');
@@ -161,8 +184,11 @@
             this._createHandlers(track);
         },
 
+        // Obtain the initial values for the inputs.
         _computeInitialValues: function() {
             var aggregated = 0;
+            // If the initial values are valid (they add up to the total), then
+            // keep them.
             var allValidValues = true;
             for (var i = 0; i < this.state.inputs.length; i++) {
                 var value = this.state.inputs[i].getAttribute('value');
@@ -173,6 +199,7 @@
                     this.state.values.push(aggregated);
                 }
             }
+            // Otherwise distribute evenly the values.
             if (aggregated != this.state.options.total || !allValidValues) {
                 this.state.values = [];
                 var acc = 0;
@@ -187,6 +214,7 @@
             }
         },
 
+        // Position the zones in the space according to the values
         _positionZones: function() {
             var prevVal = 0;
             for (var i = 0; i < this.state.zones.length; i++) {
@@ -196,17 +224,21 @@
             }
         },
 
+        // Position the handlers in the space according to the values
         _positionHandlers: function() {
             for (var i = 0; i < this.state.values.length - 1; i++) {
                 this.state.handlers[i].style.left = (this.state.values[i] * 100 / this.state.options.total) + '%';
             }
         },
 
+        // Position all elements
         _positionElements: function() {
             this._positionZones();
             this._positionHandlers();
         },
 
+        // Dispatch an event when values change so user can capture it and do
+        // something.
         _emitChange: function() {
             if (document.createEvent) {
                 var event = document.createEvent('HTMLEvents');
@@ -217,7 +249,7 @@
             }
         },
 
-
+        // Creates options from options passed by the user and default values
         _setOptions: function(defaults, options) {
             var obj = {};
             var getOption = function(opt) {
@@ -235,8 +267,7 @@
             return obj;
         },
 
-
-
+        // Constructor
         init: function (selectors, options) {
             var idlimper = '';
             var lastElement = null;
@@ -259,6 +290,8 @@
                 }
             };
 
+            // Bind the context (*this*) to the listeners of mouse events.
+            // Otherwise they won't have access to the proper *this* variable.
             this.onMouseDown = this._onMouseDown.bind(this);
             this.onMouseUp = this._onMouseUp.bind(this);
             this.onMouseMove = this._onMouseMove.bind(this);
@@ -308,13 +341,11 @@
             this._computeInitialValues();
             this._createElements();
             this._positionElements();
-
-
         },
 
+        // Destructor
         destroy: function() {
             if (this.state.el && this.state.el.parentNode) {
-                console.log("hola");
                 this.state.el.parentNode.removeChild(this.state.el);
             }
         }
