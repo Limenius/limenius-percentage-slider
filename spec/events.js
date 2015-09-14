@@ -76,7 +76,7 @@ describe("events", function() {
     };
 
     beforeEach(function() {
-        slider = new limperslider(["#percentage1", "#percentage2", "#percentage3"], { selector: '#slider-holder'});
+        slider = new Limperslider(["#percentage1", "#percentage2", "#percentage3"], { selector: '#slider-holder'});
     });
 
     afterEach(function() {

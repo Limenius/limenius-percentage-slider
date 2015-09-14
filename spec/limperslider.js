@@ -17,7 +17,7 @@ describe("limperslider", function() {
     };
 
     beforeEach(function() {
-        slider = new limperslider(["#percentage1", "#percentage2", "#percentage3"]);
+        slider = new Limperslider(["#percentage1", "#percentage2", "#percentage3"]);
     });
 
     afterEach(function() {
@@ -33,7 +33,7 @@ describe("limperslider", function() {
 
     it("Bad initialization throws exception", function() {
         var thrower = function() {
-            new limperslider(["#yolo", "#percentage2", "#percentage3"]);
+            new Limperslider(["#yolo", "#percentage2", "#percentage3"]);
         };
         expect(thrower).toThrow();
     });
@@ -70,7 +70,7 @@ describe("limperslider", function() {
         var element = document.querySelector('#percentage1');
         element.setAttribute('value', 0);
         slider.destroy();
-        slider = new limperslider(["#percentage1", "#percentage2", "#percentage3"], {decimals: 3});
+        slider = new Limperslider(["#percentage1", "#percentage2", "#percentage3"], {decimals: 3});
         expect(element.getAttribute('value')).toEqual('33.333');
         var element2 = document.querySelector('#percentage3');
         expect(element2.getAttribute('value')).toEqual('33.334');
@@ -80,11 +80,11 @@ describe("limperslider", function() {
         var element = document.querySelector('.limper-zone');
         expect(element.style['background-color']).toEqual('rgb(238, 238, 238)');
         slider.destroy();
-        slider = new limperslider(["#percentage1", "#percentage2", "#percentage3"], {defaultColor: "green"});
+        slider = new Limperslider(["#percentage1", "#percentage2", "#percentage3"], {defaultColor: "green"});
         element = document.querySelector('.limper-zone');
         expect(element.style['background-color']).toEqual('green');
         slider.destroy();
-        slider = new limperslider(["#percentage1", "#percentage2", "#percentage3"], {colors: ["green", "red"]});
+        slider = new Limperslider(["#percentage1", "#percentage2", "#percentage3"], {colors: ["green", "red"]});
         element = document.querySelectorAll('.limper-zone')[1];
         expect(element.style['background-color']).toEqual('red');
         element = document.querySelectorAll('.limper-zone')[2];
