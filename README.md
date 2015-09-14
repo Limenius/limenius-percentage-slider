@@ -13,17 +13,17 @@ Suppose you have a number of input fields in a form and they represent segments 
 
 Include somewhere `limperslider.js` and `css/limperslider.css`, and create the limperslider object. You can pass it a list of selectors:
 
-    new limperslider(["#percentage1", "#percentage2", "#percentage3"]);
+    new Limperslider(["#percentage1", "#percentage2", "#percentage3"]);
 
 ... or a list of HTMLElements, which is useful for instance it the elements are not inserted in the document:
 
-    new limperslider([$("#percentage1")[0], $("#percentage2")[0], $("#percentage3")[0]]);
+    new Limperslider([$("#percentage1")[0], $("#percentage2")[0], $("#percentage3")[0]]);
 
 This code does not need jQuery nor any other library to run. It just uses raw JavaScript (>=IE8) and thus is compatible with AngularJS or whatever environment.
 
 ## Options
 
-`new limperslider(selectors, options)` accepts a second argument `options`.
+`new Limperslider(selectors, options)` accepts a second argument `options`.
 
 * **options.selector**: Selector where the slider will be inserted.
 * **options.element**: HTMLElement where the slider will be inserted.
@@ -37,7 +37,7 @@ This library is AMD (requirejs) compatible. To use it:
 
     requirejs.config({
         paths: {
-            limperslider: '../somepath/limenius-percentage-slider/limperslider',
+            Limperslider: '../somepath/limenius-percentage-slider/limperslider',
             }
        }
     );

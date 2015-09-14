@@ -14,7 +14,7 @@
 
     // AMD Compatibility
     if (typeof define === "function" && define.amd) {
-        define("limperslider", [], function() {
+        define("Limperslider", [], function() {
             root.Limperslider = factory(root);
         });
     // As a browser global
