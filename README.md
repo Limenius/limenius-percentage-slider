@@ -1,6 +1,8 @@
 # limenius-percentage-slider
 Slider for percentages. Or segments that add up to a certain value.
 
+[![Build Status](https://travis-ci.org/Limenius/limenius-percentage-slider.svg?branch=master)](https://travis-ci.org/Limenius/limenius-percentage-slider)
+
 ![Screenshot](https://raw.githubusercontent.com/Limenius/limenius-percentage-slider/master/doc/example.png)
 
 ## Usage
