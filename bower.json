@@ -16,6 +16,7 @@
       ".bower.json",
       ".gitignore",
       ".jshintrc",
+      ".travis.yml",
       "README.md",
       "example.html",
       "doc"
