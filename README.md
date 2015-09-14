@@ -1,6 +1,8 @@
 # limenius-percentage-slider
 Slider for percentages. Or segments that add up to a certain value.
 
+![Screenshot](https://raw.githubusercontent.com/Limenius/limenius-percentage-slider/master/doc/example.png)
+
 ## Usage
 
 Suppose you have a number of input fields in a form and they represent segments of a total (for instance, **percentages** that add up to 100).
