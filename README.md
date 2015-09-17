@@ -32,6 +32,7 @@ This code does not need jQuery nor any other library to run. It just uses raw Ja
 * **options.total**: Total value to add up. Default is 100 (percentages).
 * **options.defaultColor**: Color of the segments.
 * **options.colors**: Array of the colors for each segment.
+* **options.decimals**: Decimal digits of the values. Default is 0 (integers).
 
 ## RequireJs & AMD compatible
 
