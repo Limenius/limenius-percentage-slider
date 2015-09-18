@@ -40,7 +40,7 @@ This library is AMD (requirejs) compatible. To use it:
 
     requirejs.config({
         paths: {
-            Limperslider: '../somepath/limenius-percentage-slider/limperslider',
+            limperslider: '../somepath/limenius-percentage-slider/limperslider',
             }
        }
     );
