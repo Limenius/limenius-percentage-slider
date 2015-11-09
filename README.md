@@ -7,7 +7,7 @@ Slider for percentages. Or segments that add up to a certain value.
 
 ## Usage
 
-Suppose you have a number of input fields in a form and they represent segments of a total (for instance, **percentages** that add up to 100).
+Let's suppose you have a number of input fields in a form and they represent segments of a total (for instance, **percentages** that add up to 100).
 
     <input id="percentage1" type="text"/>
     <input id="percentage2" type="text"/>
