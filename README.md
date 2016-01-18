@@ -44,3 +44,9 @@ This library is AMD (requirejs) compatible. To use it:
             }
        }
     );
+
+## CommonJs & Node.js compatible
+
+This library is also compatible with CommonJs and Node.js modules. To use it:
+
+    var Limperslider = require('limenius-percentage-slider');
