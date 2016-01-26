@@ -213,7 +213,6 @@
                     this.state.inputs[i].setAttribute('value', increment);
                     this.state.values.push(acc);
                 }
-                console.log(this.state.inputs);
                 this.state.inputs[this.state.inputs.length - 1].setAttribute('value', (this.state.options.total - acc).toFixed(this.state.options.decimals));
                 this.state.values.push(this.state.options.total);
             }
