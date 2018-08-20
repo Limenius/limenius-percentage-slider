@@ -1,4 +1,7 @@
 # limenius-percentage-slider
+
+** Unmantained ** (we have a React component now doing this :/).
+
 Slider for percentages. Or segments that add up to a certain value.
 
 [![Build Status](https://travis-ci.org/Limenius/limenius-percentage-slider.svg?branch=master)](https://travis-ci.org/Limenius/limenius-percentage-slider)
