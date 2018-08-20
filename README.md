@@ -1,6 +1,6 @@
 # limenius-percentage-slider
 
-**Unmantained** (we have a React component now doing this :/).
+**Unmaintained** (we have a React component now doing this :/).
 
 Slider for percentages. Or segments that add up to a certain value.
 
